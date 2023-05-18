@@ -6,17 +6,15 @@ jobs:
   - job: Android
     pool:
       vmImage: 'macOS-latest'
-    steps:
-    - task: FlutterInstall@0
-    - task: FlutterBuild@0
-      inputs:
-        target: apk
-        projectDirectory: $(projectDirectory)
-    - task: FlutterTest@0
-      inputs:
-        projectDirectory: $(projectDirectory)
-    - task: CopyFiles@2
-      inputs:
-        contents: '**/*.apk'
-        targetFolder: '$(build.artifactStagingDirectory)'
-    - task: PublishBuildArtifacts@1
+    stages:
+      - stage: Install
+        displayName: 'Install Dependencies'
+        jobs:
+          - job: Install
+            displayName: 'Install Flutter Dependencies'
+            steps:
+            - task: UseFlutterVersion@0
+              inputs:
+                flutterVersion: 'stable'
+            - script: flutter pub get
+              displayName: 'Install Flutter dependencies'
