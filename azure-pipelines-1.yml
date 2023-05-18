@@ -8,7 +8,7 @@ pool:
 
 variables:
   flutterSdkPath: '/usr/local/flutter'
-  flutterVersion: '2.8.1'  # Replace with the desired Flutter version
+  flutterVersion: '2.2.3'  # Replace with the desired Flutter version
 
 steps:
   - task: UsePythonVersion@0
@@ -19,10 +19,12 @@ steps:
   - script: |
       sudo apt-get install -y curl git unzip
 
-      # Install Flutter SDK
+      # Download Flutter SDK
       curl -sSL https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_${flutterVersion}-stable.tar.xz -o flutter.tar.xz
-      sudo tar xf flutter.tar.xz -C /usr/local
-      sudo chown -R $(whoami) $flutterSdkPath
+
+      # Extract Flutter SDK
+      mkdir -p $flutterSdkPath
+      tar xf flutter.tar.xz -C $flutterSdkPath
 
       # Add Flutter to PATH
       echo "export PATH=$flutterSdkPath/bin:$PATH" >> ~/.bashrc
