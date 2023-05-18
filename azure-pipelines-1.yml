@@ -19,11 +19,13 @@ steps:
   - script: |
       sudo apt-get install -y curl git unzip
 
+      # Create Flutter SDK directory
+      mkdir $flutterSdkPath
+
       # Download Flutter SDK
       curl -sSL https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_${flutterVersion}-stable.tar.xz -o flutter.tar.xz
 
       # Extract Flutter SDK
-      mkdir -p $flutterSdkPath
       tar xf flutter.tar.xz -C $flutterSdkPath
 
       # Add Flutter to PATH
