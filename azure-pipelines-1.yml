@@ -4,17 +4,30 @@ trigger:
       - main
 
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'ubuntu-latest'
 
-stages:
-  - stage: Install
-    displayName: 'Install Dependencies'
-    jobs:
-      - job: Install
-        displayName: 'Install Flutter Dependencies'
-        steps:
-          - task: UseFlutterVersion@0
-            inputs:
-              flutterVersion: 'stable'
-          - script: flutter pub get
-            displayName: 'Install Flutter dependencies'
+variables:
+  flutterSdkPath: '/usr/local/flutter'
+  flutterVersion: '2.8.1'  # Replace with the desired Flutter version
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - script: |
+      sudo apt-get install -y curl git unzip
+
+      # Install Flutter SDK
+      curl -sSL https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_${flutterVersion}-stable.tar.xz -o flutter.tar.xz
+      sudo tar xf flutter.tar.xz -C /usr/local
+      sudo chown -R $(whoami) $flutterSdkPath
+
+      # Add Flutter to PATH
+      echo "export PATH=$flutterSdkPath/bin:$PATH" >> ~/.bashrc
+      source ~/.bashrc
+
+      # Run Flutter doctor to verify installation
+      flutter doctor
+    displayName: 'Install Flutter SDK'
