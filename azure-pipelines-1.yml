@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'macOS-latest'
+
+stages:
+  - stage: Install
+    displayName: 'Install Dependencies'
+    jobs:
+      - job: Install
+        displayName: 'Install Flutter Dependencies'
+        steps:
+          - task: UseFlutterVersion@0
+            inputs:
+              flutterVersion: 'stable'
+          - script: flutter pub get
+            displayName: 'Install Flutter dependencies'
