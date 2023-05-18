@@ -1,37 +1,21 @@
-trigger:
-  branches:
-    include:
-      - main
+jobs:
+  - job: Mobile
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+      - task: FlutterInstall@0
+        inputs:
+          mode: 'auto'
+          channel: 'stable'
+          version: 'latest'
 
-pool:
-  vmImage: 'ubuntu-latest'
+      - task: FlutterBuild@0
+        inputs:
+          target: 'apk'
+          projectDirectory: '.'
+          entryPoint: "lib/main.dart"
+          iosCodesign: false
 
-variables:
-  flutterSdkPath: '/usr/local/flutter'
-  flutterVersion: '2.2.3'  # Replace with the desired Flutter version
-
-steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.x'
-      addToPath: true
-
-  - script: |
-      sudo apt-get install -y curl git unzip
-
-      # Create Flutter SDK directory
-      mkdir flutter
-
-      # Download Flutter SDK
-      curl -sSL https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_${flutterVersion}-stable.tar.xz -o flutter.tar.xz
-
-      # Extract Flutter SDK
-      tar xf flutter.tar.xz -C flutter
-
-      # Add Flutter to PATH
-      echo "export PATH=flutter/bin:$PATH" >> ~/.bashrc
-      source ~/.bashrc
-
-      # Run Flutter doctor to verify installation
-      flutter doctor
-    displayName: 'Install Flutter SDK'
+      - task: FlutterTest@0
+        inputs:
+          projectDirectory: '.'
